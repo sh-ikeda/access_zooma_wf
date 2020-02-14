@@ -3,6 +3,8 @@ class: Workflow
 
 requirements:
   MultipleInputFeatureRequirement: {}
+  ScatterFeatureRequirement: {}
+  StepInputExpressionRequirement: {}
 
 inputs:
   # Inputs for get_bs_json
@@ -10,22 +12,17 @@ inputs:
     type: int
   bsid_list:
     type: File
-  bsjson_filename:
+  output_basename:
     type: string
 
   # Inputs for gen_zooma_query
-  zooma_query_filename:
-    type: string
   attributes:
-    type: string
+    type: string?
+    default: "cell type,cell line,disease,source name,tissue"
 
-  # Inputs for query_zooma
-  zooma_result_filename:
-    type: string
-
-  # Inputs for sort
-  output_filename:
-    type: string
+  # Inputs for split_json
+  nsplit:
+    type: int
 
 outputs:
   bsjson:
@@ -39,7 +36,17 @@ outputs:
     outputSource: gen_zooma_query/zooma_query
   zooma_result:
     type: File
-    outputSource: sort/sorted_file
+    outputSource: zooma_sort/sorted_file
+  splitted_jsons:
+    type:
+      type: array
+      items: File
+    outputSource: split_json/splitted_jsons
+  consensus_tables:
+    type:
+      type: array
+      items: File
+    outputSource: consensus/consensus_tables
 
 steps:
   get_bs_json:
@@ -47,7 +54,9 @@ steps:
     in:
       bsid_list: bsid_list
       nprocess: nprocess
-      bsjson_filename: bsjson_filename
+      base: output_basename
+      bsjson_filename:
+        valueFrom: $(inputs.base).bs.json
     out:
       [bsjson, get_bs_json_log]
 
@@ -55,7 +64,9 @@ steps:
     run: gen_zooma_query.cwl
     in:
       bsjson: get_bs_json/bsjson
-      zooma_query_filename: zooma_query_filename
+      base: output_basename
+      zooma_query_filename:
+        valueFrom: $(inputs.base).zooma_query.tsv
       attributes: attributes
     out:
       [zooma_query]
@@ -65,14 +76,64 @@ steps:
     in:
       zooma_query: gen_zooma_query/zooma_query
       nprocess: nprocess
-      zooma_result_filename: zooma_result_filename
+      base: output_basename
+      zooma_result_filename:
+        valueFrom: $(inputs.base).zooma.unsorted.tsv
     out:
       [zooma_result]
 
-  sort:
+  zooma_sort:
     run: sort.cwl
     in:
       input_file: query_zooma/zooma_result
-      output_filename: output_filename
+      base: output_basename
+      output_filename:
+        valueFrom: $(inputs.base).zooma.tsv
     out:
       [sorted_file]
+
+  split_json:
+    run: split_json.cwl
+    in:
+      input_file: get_bs_json/bsjson
+      nsplit: nsplit
+      base: output_basename
+    out:
+      [splitted_jsons] # array
+
+  metasra_pipeline:
+    run: metasra_pipeline.cwl
+    scatter: input_file
+    in:
+      input_file: split_json/splitted_jsons
+      base: output_basename
+      output_filename:
+        valueFrom: $(inputs.base).metasra.raw.json
+      nprocess: nprocess
+    out:
+      [metasra_raw_json] # array
+
+  metasra_postprocess:
+    run: metasra_postprocess.cwl
+    in:
+      input_files: metasra_pipeline/metasra_raw_json
+      base: output_basename
+      output_filename:
+        valueFrom: $(inputs.base).metasra.json
+    out:
+      [metasra_json]
+
+  consensus:
+    run: consensus.cwl
+    in:
+      metasra_result: metasra_postprocess/metasra_json
+      zooma_result: zooma_sort/sorted_file
+      base: output_basename
+      consensus_filename:
+        valueFrom: $(inputs.base).zooma_metasra_consensus.tsv
+      mancheck_filename:
+        valueFrom: $(inputs.base).zooma_metasra_mancheck.tsv
+      mancheck_all_filename:
+        valueFrom: $(inputs.base).zooma_metasra_mancheck_all.tsv
+    out:
+      [consensus_tables]

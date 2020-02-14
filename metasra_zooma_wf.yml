@@ -1,10 +1,7 @@
-attributes: "cell type,cell line,disease,source name,tissue"
-zooma_result_filename: zooma_result.tsv
-
 bsid_list:
     class: File
     path: ./test_bsid_list.txt
-bsjson_filename: test.bsjson
 nprocess: 8
-output_filename: test.zooma.tsv
-zooma_query_filename: test_query.tsv
+nsplit: 3
+output_basename: wf_test
+
