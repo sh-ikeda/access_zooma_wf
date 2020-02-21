@@ -1,5 +1,7 @@
 cwlVersion: v1.0
 class: CommandLineTool
+label: "consensus: Extracts terms with which Zooma and MetaSRA unanimously annotated. A table for following human check is also output."
+doc: "Extracts terms with which Zooma and MetaSRA unanimously annotated. A table for following human check is also output."
 
 hints:
   DockerRequirement:

@@ -1,5 +1,7 @@
 cwlVersion: v1.0
 class: CommandLineTool
+label: "metasra_postprocess: Concatenates JSON files from multiple metasra_pipeline processes, converts their data into TSV format, and sorts."
+doc: "Concatenates JSON files from multiple metasra_pipeline processes, converts their data into TSV format, and sorts."
 
 hints:
   DockerRequirement:

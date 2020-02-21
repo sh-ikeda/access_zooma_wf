@@ -1,11 +1,13 @@
 cwlVersion: v1.0
 class: CommandLineTool
+label: "split_json: Split JSON file into specified number files."
+doc: "split_json: Split JSON file into specified number files."
 
 hints:
   DockerRequirement:
     dockerPull: shikeda/MetaSRA-pipeline
 
-baseCommand: [/app/MetaSRA-pipeline/split.sh]
+baseCommand: [/app/MetaSRA-pipeline/split_json.sh]
 
 inputs:
   input_file:

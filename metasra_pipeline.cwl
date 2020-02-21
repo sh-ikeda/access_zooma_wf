@@ -1,5 +1,7 @@
 cwlVersion: v1.0
 class: CommandLineTool
+label: "metasra_pipeline: Run MetaSRA-pipeline, which automatically maps BioSample metadata to ontology terms."
+doc: "Run MetaSRA-pipeline, which automatically maps BioSample metadata to ontology terms."
 
 hints:
   DockerRequirement:
