@@ -39,9 +39,8 @@ steps:
     in:
       bsid_list: bsid_list
       nprocess: nprocess
-      base: output_basename
       bsjson_filename:
-        valueFrom: $(inputs.base).bs.json
+        valueFrom: $(inputs.bsid_list.nameroot).bs.json
     out:
       [bsjson, get_bs_json_log]
 
