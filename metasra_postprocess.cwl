@@ -22,5 +22,5 @@ inputs:
 stdout: $(inputs.output_filename)
 
 outputs:
-  metasra_json:
+  metasra_tsv:
     type: stdout

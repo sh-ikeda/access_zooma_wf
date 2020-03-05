@@ -24,9 +24,14 @@ outputs:
       type: array
       items: File
     outputSource: split_json/splitted_jsons
-  metasra_json:
+  metasra_raw_json:
+    type:
+      type: array
+      items: File
+    outputSource: metasra_pipeline/metasra_raw_json
+  metasra_tsv:
     type: File
-    outputSource: metasra_postprocess/metasra_json
+    outputSource: metasra_postprocess/metasra_tsv
 
 steps:
   split_json:
@@ -55,7 +60,7 @@ steps:
       input_files: metasra_pipeline/metasra_raw_json
       base: output_basename
       output_filename:
-        valueFrom: $(inputs.base).metasra.json
+        valueFrom: $(inputs.base).metasra.tsv
     out:
-      [metasra_json]
+      [metasra_tsv]
 
