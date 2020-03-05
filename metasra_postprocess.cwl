@@ -5,9 +5,9 @@ doc: "Concatenates JSON files from multiple metasra_pipeline processes, converts
 
 hints:
   DockerRequirement:
-    dockerPull: shikeda/MetaSRA-pipeline
+    dockerPull: shikeda/metasra_postprocess
 
-baseCommand: [/app/MetaSRA-pipeline/metasra_postprocess.sh]
+baseCommand: [/app/metasra_postprocess.sh]
 
 inputs:
   input_files:
