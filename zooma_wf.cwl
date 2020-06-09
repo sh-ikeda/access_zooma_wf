@@ -6,26 +6,25 @@ requirements:
   StepInputExpressionRequirement: {}
 
 inputs:
-  # Inputs for get_bs_json
   nprocess:
     type: int
-  bsid_list:
-    type: File
   output_basename:
     type: string
 
   # Inputs for gen_zooma_query
+  bsjson:
+    type: File
   attributes:
     type: string?
     default: "cell type,cell line,disease,source name,tissue"
 
 outputs:
-  bsjson:
-    type: File
-    outputSource: get_bs_json/bsjson
-  get_bs_json_log:
-    type: File
-    outputSource: get_bs_json/get_bs_json_log
+  # bsjson:
+  #   type: File
+  #   outputSource: get_bs_json/bsjson
+  # get_bs_json_log:
+  #   type: File
+  #   outputSource: get_bs_json/get_bs_json_log
   zooma_query:
     type: File
     outputSource: gen_zooma_query/zooma_query
@@ -34,20 +33,20 @@ outputs:
     outputSource: zooma_sort/sorted_file
 
 steps:
-  get_bs_json:
-    run: get_bs_json.cwl
-    in:
-      bsid_list: bsid_list
-      nprocess: nprocess
-      bsjson_filename:
-        valueFrom: $(inputs.bsid_list.nameroot).bs.json
-    out:
-      [bsjson, get_bs_json_log]
+  # get_bs_json:
+  #   run: get_bs_json.cwl
+  #   in:
+  #     bsid_list: bsid_list
+  #     nprocess: nprocess
+  #     bsjson_filename:
+  #       valueFrom: $(inputs.bsid_list.nameroot).bs.json
+  #   out:
+  #     [bsjson, get_bs_json_log]
 
   gen_zooma_query:
     run: gen_zooma_query.cwl
     in:
-      bsjson: get_bs_json/bsjson
+      bsjson: bsjson
       base: output_basename
       zooma_query_filename:
         valueFrom: $(inputs.base).zooma_query.tsv
